@@ -12,7 +12,7 @@ module.exports = {
     connectToServer: callback => {
         client.connect((err, db) => {
             if (db) {
-                _db = db.db("products");
+                _db = db.db("stepik");
                 console.log("Successfully connected to MongoDB.");
             }
             return callback(err);
