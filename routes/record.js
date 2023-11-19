@@ -47,3 +47,23 @@ recordRoutes("/products").post(async function (req, res) {
             })
     }
 })
+
+recordRoutes("/products/:id").put(async function (req, res) {
+    const { id } = req.params;
+    const { name, price, description, quantity, unit } = req.body;
+
+    const productInDb = await db_connect.collection("products").findOne({_id: ObjectId(id)})
+    if (!productInDb) {
+        console.error("Product doesn't exist in database")
+    }
+
+    await db_connect.collection("products").updateOne(
+        {_id: ObjectId(id)},
+        {$set: {name, price, description, quantity, unit}},
+        function (err, result) {
+            if (err) throw err;
+            res.json(result)
+        }
+    )
+})
+
