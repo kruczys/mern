@@ -55,15 +55,29 @@ recordRoutes("/products/:id").put(async function (req, res) {
     const productInDb = await db_connect.collection("products").findOne({_id: ObjectId(id)})
     if (!productInDb) {
         console.error("Product doesn't exist in database")
+    } else {
+        await db_connect.collection("products").updateOne(
+            {_id: ObjectId(id)},
+            {$set: {name, price, description, quantity, unit}},
+            function (err, result) {
+                if (err) throw err;
+                res.json(result)
+            }
+        )
     }
+})
 
-    await db_connect.collection("products").updateOne(
-        {_id: ObjectId(id)},
-        {$set: {name, price, description, quantity, unit}},
-        function (err, result) {
+recordRouter("/products/:id").delete(async function (req, res) {
+    const { id } = req.params
+
+    const productInDb = await db_connect.collection("products").findOne({_id: ObjectId(id)})
+    if (!productInDb) {
+        throw new Error("No product in db");
+    } else {
+        await db_connect.collection("products").deleteOne({_id: ObjectId(id)}, function(err, result) {
             if (err) throw err;
             res.json(result)
-        }
-    )
+        })
+    }
 })
 
